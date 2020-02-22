@@ -97,3 +97,25 @@ input[type=submit], input[type=button] {
 .add-product .row {
 	margin: 0 !important;
 }
+
+#loadedImages {
+	display: flex;
+	vertical-align: top;
+	align-items: flex-start; 
+}
+.imageSmall {
+	position: relative;
+	margin: 10px 0;	
+	margin-right: 15px;
+	width: 60px;
+	height: 60px;
+	align-self: flex-start;
+}
+.imageSmall .fa {
+	color: black;
+	font-size: 1.5em;
+	position: absolute;
+	right: -5px;
+	top: -15px;
+	cursor: pointer;
+}

@@ -56,9 +56,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<div class="log-input">
 									<p style="color: red; margin: 0; margin-bottom: 10px">
 										<?php 
-											if(isset($_SESSION['errno']) && $_SESSION['errno'] == 1) 
+											if(isset($_SESSION['errno']) && $_SESSION['errno'] == 1) {
 												echo 'Admin not found!'; 
-											unset($_SESSION['errno']);
+												unset($_SESSION['errno']);
+											}
+											
 										?>
 									</p>
 									<div class="log-input-left">
@@ -70,9 +72,10 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 									<div class="log-input-left">
 										<p style="color: red; margin: 0; margin-bottom: 10px">
 											<?php 
-												if(isset($_SESSION['errno']) && $_SESSION['errno'] == 2) 
+												if(isset($_SESSION['errno']) && $_SESSION['errno'] == 2) {
 													echo 'Wrong password!'; 
-												unset($_SESSION['errno']);
+													unset($_SESSION['errno']);
+												}	
 											?>
 										</p>
 									   <input type="password" class="lock" placeholder="*******" name="password" required/>
