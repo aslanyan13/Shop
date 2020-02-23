@@ -218,7 +218,7 @@
 						<select required name="category">
 							<?php  
 								for ($i = 0; $i < count($categories); $i++) {
-									echo '<option value="' . $categories[$i] . '">' . $categories[$i] . '</option>';
+									echo '<option value="' . strval($i + 1) . '">' . $categories[$i] . '</option>';
 								}
 							?>
 						</select>

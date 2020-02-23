@@ -12,11 +12,26 @@
 
 	if($result = $mysql -> query($query)) {
 		$row = $result -> fetch_array();
-
 		$username = $row['username'];
 	} else {
 		die('ERROR: Could not execute query! ' . $mysql -> error());
 	}
+
+	$page = isset($_GET['page']) ? $_GET['page'] - 1: 0;
+
+
+	$query = 'SELECT * FROM products ORDER BY date DESC LIMIT ' . $page*18 . ', 18';
+	$row = [];
+
+	if($result = $mysql -> query($query)) {
+		while($row[] = $result -> fetch_array()) {}
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error);
+	}
+
+
+
+	//print_r($row);
 ?>
 
 <!DOCTYPE HTML>
@@ -212,7 +227,48 @@
 			</div>
 			<!-- //header-ends -->
 
+			<!-- Here is products list -->
 			<div id="page-wrapper">
+				<?php
+					for($i = 0; $i < count($row) - 1; $i++) {
+						$title = $row[$i]["name"];
+						$desc = $row[$i]['description'];
+						$price = $row[$i]['sale_price'];
+						$discount = $row[$i]['discount'];
+						$id = $row[$i]['id'];
+						$preview_url = '';
+
+						$query = "SELECT * FROM images WHERE productID = $id AND isPreview=true";
+
+						if($result = $mysql -> query($query)) {
+							$tmp = $result -> fetch_array();
+							$preview_url = $tmp['url'];
+						}
+
+						echo <<<BLOCK
+						<div class="product-block col-lg-3 col-sm-4">
+							<div class="product-block-inner">
+								<h3>$title</h3>
+								<img src="$preview_url" class='img-responsive'>
+								<p class="desc">
+									$desc
+								</p>
+								<p>
+									Price: <span class="price">$ $price</span>
+								</p>
+								<p>
+									Discount: <span class="discount">$discount %</span>
+								</p>
+								<div class="product-controlls">
+									<a href="#" class="see" data-toggle="modal" data-target="#infoModal" data-id='1'><i class="fa fa-eye"></i></a>
+									<a href="#" class="edit" data-toggle="modal" data-target="#editModal"><i class="fa fa-edit"></i></a>
+									<a href="#" class="remove" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash-o"></i></a>
+								</div>
+							</div>
+						</div>
+						BLOCK;
+					}
+				?>
 				<div class="product-block col-lg-3 col-sm-4">
 					<div class="product-block-inner">
 						<h3>[Product title]</h3>
