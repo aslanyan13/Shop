@@ -122,3 +122,7 @@ input[type=submit], input[type=button] {
 	top: -15px;
 	cursor: pointer;
 }
+
+.hidden {
+	visibility: hidden;
+}

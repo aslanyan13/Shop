@@ -17,6 +17,32 @@
 	} else {
 		die('ERROR: Could not execute query! ' . $mysql -> error());
 	}
+
+	$query = "SELECT count(id) as prod_count FROM products";
+
+	$products_count = 0;
+	if($result = $mysql -> query ($query)) {
+		if($result -> num_rows > 0) {
+			$row = $result -> fetch_array();
+
+			$products_count = $row['prod_count'] ;
+		}
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error);
+	}
+
+	/*$query = "SELECT last_insert_id() FROM sales";
+
+	$sales_count = 0;
+	if($result = $mysql -> query ($query)) {
+		if($result -> num_rows > 0) {
+			$row = $result -> fetch_array();
+
+			$sales_count = $row['last_insert_id()'] ;
+		}
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error);
+	}*/
 ?>
 
 <!DOCTYPE HTML>
@@ -158,7 +184,11 @@
 							<div class="r3_counter_box">
 								<i class="fa fa-shopping-basket"></i>
 								<div class="stats">
-								  <h5>600</h5>
+								  <h5>
+								  	<?php 
+								  		echo ($products_count != 0) ? $products_count : '0'; 
+								  	?>
+								  </h5>
 								  <div class="grow">
 									<p>Products</p>
 								  </div>
@@ -169,7 +199,11 @@
 							<div class="r3_counter_box">
 								<i class="fa fa-cart-arrow-down"></i>
 								<div class="stats">
-								  <h5>785</h5>
+								  <h5>
+								  	<?php 
+								  		//echo ($sales_count != 0) ? $sales_count : '0'; 
+								  	?>
+								  	</h5>
 								  <div class="grow grow1">
 									<p>Sales</p>
 								  </div>

@@ -76,63 +76,6 @@
    
  <body class="sticky-header left-side-collapsed"  onload="initMap()">
 
- 	<!-- removing modal -->
-	<div class="modal fade" id="removeModal" tabindex="-1" role="dialog" aria-labelledby="removeModal" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">Remove product</h5>
-	      </div>
-	      <div class="modal-body">
-	        Are you sure to remove [title]?
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-danger">Remove</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<!-- // removing modal -->
-
-	<!-- Editing modal -->
-	<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="editModal" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">Edit product</h5>
-	      </div>
-	      <div class="modal-body">
-	      	<form>
-	      		
-	      	</form>
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	        <button type="button" class="btn btn-primary">Save changes</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<!-- // Editing modal -->
-
-	<!-- Info modal -->
-	<div class="modal fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="infoModal" aria-hidden="true">
-	  <div class="modal-dialog" role="document">
-	    <div class="modal-content">
-	      <div class="modal-header">
-	        <h5 class="modal-title" id="exampleModalLabel">Product info</h5>
-	      </div>
-	      <div class="modal-body">
-	      </div>
-	      <div class="modal-footer">
-	        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-	      </div>
-	    </div>
-	  </div>
-	</div>
-	<!-- // Info modal -->
-
     <section>
     <!-- left side start-->
 		<div class="left-side sticky-left-side">
@@ -229,11 +172,19 @@
 
 			<!-- Here is products list -->
 			<div id="page-wrapper">
+				<form class="search">
+					<p>
+						<input type="search" name="searchQuery">
+						<input type="submit" class="btn btn-success" value="Search">
+					</p>
+				</form>
+
 				<?php
 					for($i = 0; $i < count($row) - 1; $i++) {
 						$title = $row[$i]["name"];
 						$desc = $row[$i]['description'];
 						$price = $row[$i]['sale_price'];
+						$purchase = $row[$i]['purchase_price'];
 						$discount = $row[$i]['discount'];
 						$id = $row[$i]['id'];
 						$preview_url = '';
@@ -246,7 +197,7 @@
 						}
 
 						echo <<<BLOCK
-						<div class="product-block col-lg-3 col-sm-4">
+						<div class="product-block col-lg-3 col-sm-4" id="product$i">
 							<div class="product-block-inner">
 								<h3>$title</h3>
 								<img src="$preview_url" class='img-responsive'>
@@ -260,35 +211,18 @@
 									Discount: <span class="discount">$discount %</span>
 								</p>
 								<div class="product-controlls">
-									<a href="#" class="see" data-toggle="modal" data-target="#infoModal" data-id='1'><i class="fa fa-eye"></i></a>
-									<a href="#" class="edit" data-toggle="modal" data-target="#editModal"><i class="fa fa-edit"></i></a>
-									<a href="#" class="remove" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash-o"></i></a>
+									<a href="product-info.php?id=$id" class="see"><i class="fa fa-eye"></i></a>
+									<a href="edit-product.php?id=$id" class="edit"><i class="fa fa-edit"></i></a>
+									<a href="php/delete-product.php?id=$id" class="remove"><i class="fa fa-trash-o"></i></a>
 								</div>
 							</div>
 						</div>
 						BLOCK;
 					}
+					if(count($row) - 1 == 0) {
+						echo "<h2 class='text-center'>There are no products! <a href='add-product.php'>Add product</a>.</h2>";
+					}
 				?>
-				<div class="product-block col-lg-3 col-sm-4">
-					<div class="product-block-inner">
-						<h3>[Product title]</h3>
-						<img src="../main/images/a12.jpg">
-						<p class="desc">
-							[Description]
-						</p>
-						<p>
-							Price: <span class="price">[Price]</span>
-						</p>
-						<p>
-							Discount: <span class="discount">[Discount]</span>
-						</p>
-						<div class="product-controlls">
-							<a href="#" class="see" data-toggle="modal" data-target="#infoModal" data-id='1'><i class="fa fa-eye"></i></a>
-							<a href="#" class="edit" data-toggle="modal" data-target="#editModal"><i class="fa fa-edit"></i></a>
-							<a href="#" class="remove" data-toggle="modal" data-target="#removeModal"><i class="fa fa-trash-o"></i></a>
-						</div>
-					</div>
-				</div>
 			</div>
        		<!--footer section start-->
 			<footer>
