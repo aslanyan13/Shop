@@ -101,7 +101,7 @@
 						
 					</li>
 
-					<li class="active"><a href="index.html"><i class="lnr lnr-pie-chart"></i>
+					<li class="active"><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
 					</li>
 				</ul>
@@ -271,7 +271,7 @@
 			</div>
        		<!--footer section start-->
 			<footer>
-			   <p>&copy 2015 Easy Admin Panel. All Rights Reserved | Design by <a href="https://w3layouts.com/" target="_blank">w3layouts.</a></p>
+			   <p>&copy 2020 Easy Admin Panel. All Rights Reserved</p>
 			</footer>
         	<!--footer section end-->
 
