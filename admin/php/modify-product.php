@@ -11,8 +11,8 @@
 
 	// Product info
 	$id = $_GET['id'];
-	$title = $_POST['title'];
-	$desc = $_POST['description'];
+	$title = htmlspecialchars(trim($_POST['title']));
+	$desc = htmlspecialchars(trim($_POST['description']));
 	$p_price = $_POST['purchasePrice'];
 	$s_price = $_POST['salePrice'];
 	$discount = $_POST['discount'];
@@ -29,7 +29,7 @@
 				sale_price=$s_price,
 				discount=$discount,
 				categoryID=$category
-			";
+			WHERE id=$id";
 	if(!$mysql -> query($query)){
 		die("ERROR: Couldn't add record. " . $mysql -> error);
 	}

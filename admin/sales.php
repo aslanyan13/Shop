@@ -8,6 +8,8 @@
 
 	$query = 'SELECT * FROM admins WHERE id=' . $_SESSION['admin_id'];
 
+	$page = isset($_GET['page']) ? $_GET['page'] - 1: 0;
+
 	$username = "";
 
 	if($result = $mysql -> query($query)) {
@@ -15,7 +17,18 @@
 
 		$username = $row['username'];
 	} else {
-		die('ERROR: Could not execute query! ' . $mysql -> error());
+		die('ERROR: Could not execute query! ' . $mysql -> error);
+	}
+
+	$sales = 0;
+	$query = "SELECT count(id) AS row_count FROM sales";
+
+	if($result = $mysql -> query($query)) {
+		$tmp = $result -> fetch_array();
+		$sales = $tmp['row_count'];
+		$max_pages = ceil($sales / 18);
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error);
 	}
 ?>
 
@@ -30,6 +43,7 @@
 	<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 	 <!-- Bootstrap Core CSS -->
 	<link href="css/bootstrap.min.css" rel='stylesheet' type='text/css' />
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha/js/bootstrap.min.js"></script>
 	<!-- Custom CSS -->
 	<link href="css/style.css" rel='stylesheet' type='text/css' />
 	<!-- Graph CSS -->
@@ -55,6 +69,7 @@
 	<script src="js/jquery-1.10.2.min.js"></script>
 	<!-- Placed js at the end of the document so the pages load faster -->
 
+	<link href="css/myStyle.css" rel='stylesheet' type='text/css' />
 </head> 
    
  <body class="sticky-header left-side-collapsed"  onload="initMap()">
@@ -63,30 +78,30 @@
 		<div class="left-side sticky-left-side">
 			<!--logo and iconic logo start-->
 			<div class="logo">
-				<h1><a href="index.html">Easy <span>Admin</span></a></h1>
+				<h1><a href="index.php">Easy <span>Admin</span></a></h1>
 			</div>
 			<div class="logo-icon text-center">
-				<a href="index.html"><i class="lnr lnr-home"></i> </a>
+				<a href="index.php"><i class="lnr lnr-home"></i> </a>
 			</div>
 
 			<!--logo and iconic logo end-->
 			<div class="left-side-inner">
 				<!--sidebar nav start-->
 				<ul class="nav nav-pills nav-stacked custom-nav">
-					<li><a href="index.html"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
+					<li><a href="index.php"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
 
-					<li class="active">
-						<a href="index.html">
+					<li>
+						<a href="products.php">
 							<i class="lnr lnr-cart"></i>
 							<span>Products</span>
 						</a>
 						<ul class="sub-menu-list">
-							<li><a href="#">Add new product</a> </li>
+							<li><a href="add-product.php">Add new product</a> </li>
 						</ul>
 						
 					</li>
 
-					<li><a href="index.html"><i class="lnr lnr-pie-chart"></i>
+					<li class="active"><a href="index.html"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
 					</li>
 				</ul>
@@ -127,7 +142,7 @@
 									</div>	
 								</a>
 								<ul class="dropdown-menu drp-mnu">
-									<li> <a href="sign-up.html"><i class="fa fa-sign-out"></i> Logout</a> </li>
+									<li> <a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a> </li>
 								</ul>
 							</li>
 							<div class="clearfix"> </div>
@@ -153,6 +168,106 @@
 			<!-- //header-ends -->
 
 			<div id="page-wrapper">
+				<?php  
+					echo '<table class="table table-hover">';
+					echo '<thead>';
+						echo '<tr>';
+						 	echo '<th scope="col">ID</th>';
+						 	echo '<th scope="col">Product</th>';
+						 	echo '<th scope="col">Purchase price</th>';
+						 	echo '<th scope="col">Sale price</th>';
+						 	echo '<th scope="col">Profit</th>';
+						 	echo '<th scope="col">Date</th>';
+						 echo '</tr>';
+					echo '</thead>';
+					
+
+					$query = 
+					"SELECT s.id, p.name, p.sale_price, p.purchase_price, p.discount, s.date FROM sales as s
+					LEFT JOIN products as p
+					ON s.productID = p.id;";
+
+					echo '<tbody>';
+
+					$total_sales_price = 0;
+					$total_count = 0;
+					$total_purchase = 0;
+					$total_profit = 0;
+
+					if ($result = $mysql -> query($query)) {
+						while($row = $result -> fetch_array()) {
+							$discount = $row['discount'];
+							if($discount != 0)
+								$price_with_discount = $row['sale_price'] * $discount / 100;
+							else
+								$price_with_discount = $row['sale_price'];
+
+							$total_profit += $price_with_discount - $row['purchase_price'];
+							$total_sales_price += $price_with_discount;
+							$total_purchase += $row['purchase_price'];
+							$total_count++;
+
+							if(($row['sale_price'] - $row['purchase_price']) > 0) {
+								echo '<tr class="success">';
+							} else if (($row['sale_price'] - $row['purchase_price']) == 0) {
+								echo '<tr class="warning">';
+							} else {
+								echo '<tr class="danger">';
+							}
+								echo "<th scope='row'>" . $row['id'] . "</th>";
+								echo "<td>" .$row['name']. "</td>";
+								echo "<td> $" .$row['purchase_price']. "</td>";
+								echo "<td> $" .$row['sale_price']. " ($ " . $price_with_discount . " with discount) </td>";
+								echo "<td> $" . ($price_with_discount - $row['purchase_price']) . "</td>";
+								echo "<td>" .$row['date']. "</td>";
+							echo '</tr>';
+						}
+ 					} else {
+						die('ERROR: Could not execute query! ' . $mysql -> error);
+					}
+
+					echo '</tbody>';
+					echo '</table>';
+
+					echo '<table class="table table-hover totals">';
+					echo '<thead>';
+						echo '<tr>';
+						 	echo '<th scope="col">Sales Count</th>';
+						 	echo '<th scope="col">Total purchase</th>';
+						 	echo '<th scope="col">Total sale</th>';
+						 	echo '<th scope="col">Total profit</th>';
+						 echo '</tr>';
+					echo '</thead>';
+					echo '<tbody>';
+						echo '<tr>';
+							echo '<td scope="row">' . $total_count . '</td>';
+						 	echo '<td> $' . $total_purchase . '</td>';
+						 	echo '<td> $' . $total_sales_price . '</td>';
+						 	if($total_profit < 0)
+						 		echo '<td class="danger">';
+						 	else if($total_profit == 0)
+						 		echo '<td class="warning">';
+						 	else
+						 		echo '<td class="success">';
+						 	echo $total_profit . '</td>';
+						echo '</tr>';
+					echo '</tbody>';
+
+					echo '</table>';
+
+					echo '<p class="text-center page-select">';
+
+					echo '<a href="sales.php"><<</a> ';
+
+					for($i = $page - 2; $i <= $page +2; $i++)
+					{
+						if($i <= 0 || $i > $max_pages) continue;
+						echo "<a href='sales.php?page=$i'>" . ($i) ." </a>";
+					}
+
+					echo "<a href='sales.php?page=$max_pages'>>></a>";
+					echo '</p>';
+				?>
 			</div>
        		<!--footer section start-->
 			<footer>

@@ -10,8 +10,8 @@
 		header('Location: ../add-product.php');
 
 	// Product info
-	$title = $_POST['title'];
-	$desc = $_POST['description'];
+	$title = htmlspecialchars(trim($_POST['title']));
+	$desc = htmlspecialchars(trim($_POST['description']));
 	$p_price = $_POST['purchasePrice'];
 	$s_price = $_POST['salePrice'];
 	$discount = $_POST['discount'];

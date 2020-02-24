@@ -31,18 +31,70 @@
 		die('ERROR: Could not execute query! ' . $mysql -> error);
 	}
 
-	/*$query = "SELECT last_insert_id() FROM sales";
+	$query = "SELECT count(id) as sales_count FROM sales";
 
 	$sales_count = 0;
 	if($result = $mysql -> query ($query)) {
 		if($result -> num_rows > 0) {
 			$row = $result -> fetch_array();
 
-			$sales_count = $row['last_insert_id()'] ;
+			$sales_count = $row['sales_count'] ;
 		}
 	} else {
 		die('ERROR: Could not execute query! ' . $mysql -> error);
-	}*/
+	}
+
+	$sales_list = [];
+
+	$query = "SELECT p.purchase_price, p.sale_price, p.discount, s.date FROM sales as s
+			  LEFT JOIN products as p
+			  ON s.productID = p.id";
+
+	if($result = $mysql -> query ($query)) {
+		while($sales_list[] = $result -> fetch_array()) {
+		}
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error);
+	}
+
+	$profit = 0;
+
+	for($i = 0; $i < count($sales_list) - 1; $i++) {
+		if($sales_list[$i]['discount'] != 0)
+			$profit += $sales_list[$i]['sale_price'] * $sales_list[$i]['discount'] / 100 - $sales_list[$i]['purchase_price'];
+		else 
+			$profit += $sales_list[$i]['sale_price'] - $sales_list[$i]['purchase_price'];
+	}
+
+	$today_earning = 0;
+	$today_sold = 0;
+
+	$all_time_earning = 0;
+	$all_time_sold = 0;
+
+	$month_earning = 0;
+	$month_sold = 0;
+
+	$now = date("Y-m-d h:i:sa");
+	$day_start = mktime(0, 0, 0, date('m'), date('d'), date('Y'));
+	$day_start = date("Y-m-d h:i:sa", $day_start);
+
+	$month_start = mktime(0, 0, 0, date('m'), 1, date('Y'));
+	$month_start = date("Y-m-d h:i:sa", $month_start);
+
+
+	for($i = 0; $i < count($sales_list) - 1; $i++) {
+		if($sales_list[$i]['date'] > $day_start) {
+			$today_earning += $sales_list[$i]['sale_price'];
+			$today_sold++;
+		}
+		if($sales_list[$i]['date'] > $month_start) {
+			$month_earning += $sales_list[$i]['sale_price'];
+			$month_sold++;
+		}
+		$all_time_earning += $sales_list[$i]['sale_price'];
+		$all_time_sold++;
+	}
 ?>
 
 <!DOCTYPE HTML>
@@ -200,8 +252,8 @@
 								<i class="fa fa-cart-arrow-down"></i>
 								<div class="stats">
 								  <h5>
-								  	<?php 
-								  		//echo ($sales_count != 0) ? $sales_count : '0'; 
+								  <?php 
+								  		echo ($sales_count != 0) ? $sales_count : '0'; 
 								  	?>
 								  	</h5>
 								  <div class="grow grow1">
@@ -225,7 +277,7 @@
 							<div class="r3_counter_box">
 								<i class="fa fa-usd"></i>
 								<div class="stats">
-								  <h5>70 <span>$</span></h5>
+								  <h5><?php echo ($profit != 0) ? $profit : '0'; ?> <span>$</span></h5>
 								  <div class="grow grow2">
 									<p>Profit</p>
 								  </div>
@@ -244,9 +296,8 @@
 								<h3>TODAY'S STATS</h3>
 								<p>Duis aute irure dolor in reprehenderit.</p>
 								<ul>
-									<li>Earning: $400 USD</li>
-									<li>Items Sold: 20 Items</li>
-									<li>Last Hour Sales: $34 USD</li>
+									<li>Earning: $<?php echo ($today_earning != 0) ? $today_earning : '0'; ?> USD</li>
+									<li>Items Sold: <?php echo ($today_sold != 0) ? $today_earning : '0'; ?> Items</li>
 								</ul>
 							</div>
 						</div>
@@ -257,9 +308,8 @@
 								<h3>MONTHLY STATS</h3>
 								<p>Duis aute irure dolor in reprehenderit.</p>
 								<ul>
-									<li>Earning: $5,000 USD</li>
-									<li>Items Sold: 400 Items</li>
-									<li>Last Hour Sales: $2,434 USD</li>
+									<li>Earning: $<?php echo ($month_earning != 0) ? $month_earning : '0'; ?> USD</li>
+									<li>Items Sold: <?php echo ($month_sold != 0) ? $month_sold : '0'; ?> Items</li>
 								</ul>
 							</div>
 						</div>
@@ -270,9 +320,8 @@
 								<h3>ALLTIME STATS</h3>
 								<p>Duis aute irure dolor in reprehenderit.</p>
 								<ul>
-									<li>Earning: $80,000 USD</li>
-									<li>Items Sold: 8,000 Items</li>
-									<li>Last Hour Sales: $75,434 USD</li>
+									<li>Earning: $<?php echo ($all_time_earning != 0) ? $all_time_earning : '0'; ?> USD</li>
+									<li>Items Sold: <?php echo ($all_time_sold != 0) ? $all_time_sold : '0'; ?> Items</li>
 								</ul>
 							</div>
 						</div>

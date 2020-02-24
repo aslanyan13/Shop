@@ -176,7 +176,7 @@
 									</div>	
 								</a>
 								<ul class="dropdown-menu drp-mnu">
-									<li> <a href="sign-up.html"><i class="fa fa-sign-out"></i> Logout</a> </li>
+									<li> <a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a> </li>
 								</ul>
 							</li>
 							<div class="clearfix"> </div>
@@ -229,7 +229,7 @@
 						<input type="file" id="images" name="images[]" accept="image/*" multiple>
 						<div class="row" id="loadedImages">
 							<?php 
-								for ($i = 0; $i < count($images_info); $i++) {
+								for ($i = 0; $i < count($images_info) - 1; $i++) {
 									$url = $images_info[$i]['url'];
 									$id = $images_info[$i]['id'];
 									echo " 
@@ -269,7 +269,7 @@
 						</select>
 					</p>
 					<input type="submit" value="Save changes" class="btn btn-primary">
-					<input type="button" value="Cancel" class="btn btn-secondary">
+					<input type="button" value="Cancel" class="btn btn-secondary" onclick="location.href='products.php'">
 
 					<select class="hidden" name="deleteImages[]" id="deletedImagesList" multiple>
 					</select>

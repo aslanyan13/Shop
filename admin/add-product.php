@@ -144,7 +144,7 @@
 									</div>	
 								</a>
 								<ul class="dropdown-menu drp-mnu">
-									<li> <a href="sign-up.html"><i class="fa fa-sign-out"></i> Logout</a> </li>
+									<li> <a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a> </li>
 								</ul>
 							</li>
 							<div class="clearfix"> </div>

@@ -20,10 +20,10 @@
 	$page = isset($_GET['page']) ? $_GET['page'] - 1: 0;
 
 
-	$query = 'SELECT * FROM products';
+	$query = 'SELECT * FROM products ';
 
-	if(isset($_GET['searchQuery'])) {
-		$query .= ' WHERE name REGEXP "^.*' . $_GET['searchQuery'] . '.*$" ';
+	if(isset($_GET['searchQuery']) && !empty($_GET['searchQuery'])) {
+		$query .= 'WHERE name REGEXP "^.*' . trim($_GET['searchQuery']) . '.*$" ';
 	}
 
 	if(isset($_GET['sorting'])) {
@@ -35,7 +35,9 @@
 		if($_GET['sorting'] == 'zA') $query .= 'ORDER BY name DESC';
 	}
 
-	$query .= ' LIMIT ' . $page*18 . ', 18';
+	$elements_in_page = 18;
+
+	$query .= ' LIMIT ' . $page*$elements_in_page . ', ' . $elements_in_page;
 	$row = [];
 
 	if($result = $mysql -> query($query)) {
@@ -105,10 +107,10 @@
 		<div class="left-side sticky-left-side">
 			<!--logo and iconic logo start-->
 			<div class="logo">
-				<h1><a href="index.html">Easy <span>Admin</span></a></h1>
+				<h1><a href="index.php">Easy <span>Admin</span></a></h1>
 			</div>
 			<div class="logo-icon text-center">
-				<a href="index.html"><i class="lnr lnr-home"></i> </a>
+				<a href="index.php"><i class="lnr lnr-home"></i> </a>
 			</div>
 
 			<!--logo and iconic logo end-->
@@ -117,7 +119,7 @@
 				<ul class="nav nav-pills nav-stacked custom-nav">
 					<li><a href="index.php"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
 
-					<li class="active">
+					<li class="selected">
 						<a href="products.php">
 							<i class="lnr lnr-cart"></i>
 							<span>Products</span>
@@ -128,7 +130,7 @@
 						
 					</li>
 
-					<li><a href="index.html"><i class="lnr lnr-pie-chart"></i>
+					<li><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
 					</li>
 				</ul>
@@ -169,7 +171,7 @@
 									</div>	
 								</a>
 								<ul class="dropdown-menu drp-mnu">
-									<li> <a href="sign-up.html"><i class="fa fa-sign-out"></i> Logout</a> </li>
+									<li> <a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a> </li>
 								</ul>
 							</li>
 							<div class="clearfix"> </div>
@@ -197,16 +199,16 @@
 			<!-- Here is products list -->
 			<div id="page-wrapper">
 				<form class="search" method="GET">
-					<input type="search" name="searchQuery" placeholder="Product title...">
+					<input type="search" name="searchQuery" placeholder="Product title..." value="<?php if(isset($_GET['searchQuery'])) echo $_GET['searchQuery']; ?>">
 					<p>
 						Sort by: 
 						<select name="sorting">
-							<option value="new">Date (First newest)</option>
-							<option value="old">Date (First oldest)</option>
-							<option value="priceUp">Price Up</option>
-							<option value="priceDown">Price Down</option>
-							<option value="Az">Alphabet (A-z)</option>
-							<option value="zA">Alphabet (Z-a)</option>
+							<option value="new" <?php if(isset($_GET['sorting']) && $_GET['sorting'] == 'new') echo 'selected'; ?>>Date (First newest)</option>
+							<option value="old" <?php if(isset($_GET['sorting']) && $_GET['sorting'] == 'old') echo 'selected'; ?>>Date (First oldest)</option>
+							<option value="priceUp" <?php if(isset($_GET['sorting']) && $_GET['sorting'] == 'priceUp') echo 'selected'; ?>>Price Up</option>
+							<option value="priceDown" <?php if(isset($_GET['sorting']) && $_GET['sorting'] == 'priceDown') echo 'selected'; ?>>Price Down</option>
+							<option value="Az" <?php if(isset($_GET['sorting']) && $_GET['sorting'] == 'Az') echo 'selected'; ?>>Alphabet (A-z)</option>
+							<option value="zA" <?php if(isset($_GET['sorting']) && $_GET['sorting'] == 'zA') echo 'selected'; ?>>Alphabet (Z-a)</option>
 						</select>
 					</p>
 					<input type="submit" class="btn btn-success" value="Search">

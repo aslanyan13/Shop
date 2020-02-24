@@ -107,6 +107,10 @@
 </head> 
    
  <body class="sticky-header left-side-collapsed"  onload="initMap()">
+	<div class="dark-wrapper">
+		
+	</div>
+
     <section>
     <!-- left side start-->
 		<div class="left-side sticky-left-side">
@@ -176,7 +180,7 @@
 									</div>	
 								</a>
 								<ul class="dropdown-menu drp-mnu">
-									<li> <a href="sign-up.html"><i class="fa fa-sign-out"></i> Logout</a> </li>
+									<li> <a href="logout.php"><i class="fa fa-sign-out"></i> Logout</a> </li>
 								</ul>
 							</li>
 							<div class="clearfix"> </div>
@@ -203,16 +207,16 @@
 
 			<!-- Form -->
 			<div id="page-wrapper">
-				<form class="add-product container" action="php/add-product.php" method="POST" enctype="multipart/form-data">
-					<h1>Edit product</h1>
+				<form class="add-product product-info container" action="php/add-product.php" method="POST" enctype="multipart/form-data">
+					<h1>Product info</h1>
 
 					<!-- Product title -->
 					<p>
-						<div>Product title</div>
+						<h4>Product title</h4>
 						<?php echo $info['name']; ?>
 					</p>
 					<p>
-						<div>Product description</div>
+						<h4>Product description</h4>
 						<?php echo $info['description']; ?>
 					</p>
 					<p class="imgPreview">
@@ -262,6 +266,34 @@
 	<!-- Bootstrap Core JavaScript -->
 	<script src="js/bootstrap.min.js"></script>
 
+	<script>
+		var images = document.querySelectorAll('.imageSmall');
+		var darkWrapper = document.querySelector('.dark-wrapper');
+
+		for(let i = 0; i < images.length; i++)
+		{
+			images[i].addEventListener('click', function () {
+				darkWrapper.style.display = 'flex';
+				let imageUrl = images[i].style.backgroundImage;
+
+				urlStart = imageUrl.indexOf('"');
+				urlEnd = imageUrl.lastIndexOf('"');
+
+				imageUrl = imageUrl.substr(urlStart + 1, urlEnd -2 - urlStart + 1)
+
+				let node = document.createElement('img');
+				node.classList.add('image-full');
+				node.src = imageUrl;
+				darkWrapper.appendChild(node);
+				darkWrapper.addEventListener('click', function(event) {
+					if(event.target.className == 'dark-wrapper') {
+						darkWrapper.innerHTML = '';
+						darkWrapper.style.display = 'none';
+					}
+				})
+			})
+		}
+	</script>
 	<!-- modal -->
 </body>
 </html>

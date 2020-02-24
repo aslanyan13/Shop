@@ -11,7 +11,7 @@
 	if($mysql -> query($query)) {
 		header('Location: ../products.php');
 	} else {
-		die("ERROR: Couldn't remove record. " . $mysql -> error());
+		die("ERROR: Couldn't remove record. " . $mysql -> error);
 	}
 
 	$mysql -> close();
