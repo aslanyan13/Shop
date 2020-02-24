@@ -24,6 +24,10 @@
 	text-align: left;
 	color: #777;
 }
+.product-block-inner img {
+	max-width: 100%;
+	height: auto;
+}
 .product-block-inner .desc {
 	height: 20px;
 	color: #999;
@@ -125,4 +129,20 @@ input[type=submit], input[type=button] {
 
 .hidden {
 	visibility: hidden;
+}
+
+.search input[type=search] {
+	width: 300px;
+	margin: 10px 0;
+	display: inline-flex;
+}
+.search input[type=submit] {
+	text-align: center;
+	padding: 10px 20px;
+	margin: 10px 0;
+}
+
+.page-select {
+	width: 100%;
+	display: block;
 }

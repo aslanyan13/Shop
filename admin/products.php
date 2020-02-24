@@ -20,7 +20,22 @@
 	$page = isset($_GET['page']) ? $_GET['page'] - 1: 0;
 
 
-	$query = 'SELECT * FROM products ORDER BY date DESC LIMIT ' . $page*18 . ', 18';
+	$query = 'SELECT * FROM products';
+
+	if(isset($_GET['searchQuery'])) {
+		$query .= ' WHERE name REGEXP "^.*' . $_GET['searchQuery'] . '.*$" ';
+	}
+
+	if(isset($_GET['sorting'])) {
+		if($_GET['sorting'] == 'old') $query .= 'ORDER BY date';
+		if($_GET['sorting'] == 'new') $query .= 'ORDER BY date DESC';
+		if($_GET['sorting'] == 'priceUp') $query .= 'ORDER BY sale_price';
+		if($_GET['sorting'] == 'priceDown') $query .= 'ORDER BY sale_price DESC';
+		if($_GET['sorting'] == 'aZ') $query .= 'ORDER BY name';
+		if($_GET['sorting'] == 'zA') $query .= 'ORDER BY name DESC';
+	}
+
+	$query .= ' LIMIT ' . $page*18 . ', 18';
 	$row = [];
 
 	if($result = $mysql -> query($query)) {
@@ -28,8 +43,17 @@
 	} else {
 		die('ERROR: Could not execute query! ' . $mysql -> error);
 	}
+	$products = 0;
+	$max_pages = 0;
 
-
+	$query = "SELECT count(id) AS row_count FROM products";
+	if($result = $mysql -> query($query)) {
+		$tmp = $result -> fetch_array();
+		$products = $tmp['row_count'];
+		$max_pages = ceil($products / 18);
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error);
+	}
 
 	//print_r($row);
 ?>
@@ -91,15 +115,15 @@
 			<div class="left-side-inner">
 				<!--sidebar nav start-->
 				<ul class="nav nav-pills nav-stacked custom-nav">
-					<li><a href="index.html"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
+					<li><a href="index.php"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
 
 					<li class="active">
-						<a href="index.html">
+						<a href="products.php">
 							<i class="lnr lnr-cart"></i>
 							<span>Products</span>
 						</a>
 						<ul class="sub-menu-list">
-							<li><a href="#">Add new product</a> </li>
+							<li><a href="add-product.php">Add new product</a> </li>
 						</ul>
 						
 					</li>
@@ -172,14 +196,41 @@
 
 			<!-- Here is products list -->
 			<div id="page-wrapper">
-				<form class="search">
+				<form class="search" method="GET">
+					<input type="search" name="searchQuery" placeholder="Product title...">
 					<p>
-						<input type="search" name="searchQuery">
-						<input type="submit" class="btn btn-success" value="Search">
+						Sort by: 
+						<select name="sorting">
+							<option value="new">Date (First newest)</option>
+							<option value="old">Date (First oldest)</option>
+							<option value="priceUp">Price Up</option>
+							<option value="priceDown">Price Down</option>
+							<option value="Az">Alphabet (A-z)</option>
+							<option value="zA">Alphabet (Z-a)</option>
+						</select>
 					</p>
+					<input type="submit" class="btn btn-success" value="Search">
 				</form>
 
 				<?php
+					if(count($row) - 1 == 0) {
+						echo "<h2 class='text-center'>There are no products! <a href='add-product.php'>Add product</a>.</h2>";
+					} else {
+						echo '<p class="text-center page-select">';
+
+						echo '<a href="products.php"><<</a> ';
+
+						for($i = $page - 2; $i <= $page +2; $i++)
+						{
+							if($i <= 0 || $i > $max_pages) continue;
+							echo "<a href='products.php?page=$i'>" . ($i) ." </a>";
+						}
+
+						echo "<a href='products.php?page=$max_pages'>>></a>";
+						echo '</p>';
+					}
+					
+
 					for($i = 0; $i < count($row) - 1; $i++) {
 						$title = $row[$i]["name"];
 						$desc = $row[$i]['description'];
@@ -200,7 +251,7 @@
 						<div class="product-block col-lg-3 col-sm-4" id="product$i">
 							<div class="product-block-inner">
 								<h3>$title</h3>
-								<img src="$preview_url" class='img-responsive'>
+								<img src="$preview_url">
 								<p class="desc">
 									$desc
 								</p>
@@ -219,9 +270,7 @@
 						</div>
 						BLOCK;
 					}
-					if(count($row) - 1 == 0) {
-						echo "<h2 class='text-center'>There are no products! <a href='add-product.php'>Add product</a>.</h2>";
-					}
+					
 				?>
 			</div>
        		<!--footer section start-->
@@ -237,6 +286,19 @@
 	<script src="js/scripts.js"></script>
 	<!-- Bootstrap Core JavaScript -->
 	<script src="js/bootstrap.min.js"></script>
+	<script type="text/javascript">
+		var removeButtons = document.querySelectorAll('.remove');
+
+		for(let i = 0; i < removeButtons.length; i++)
+		{
+			removeButtons[i].addEventListener('click', function (event) {
+				let ans = confirm('Do you want to delete this product?');
+
+				if(ans == false) 
+					event.preventDefault();
+			})
+		}
+	</script>
 
 	<!-- modal -->
 </body>

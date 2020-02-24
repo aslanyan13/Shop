@@ -51,6 +51,18 @@
 		die('ERROR: Could not execute query! ' . $mysql -> error());
 	}
 
+	$images_info = [];
+	$query = 'SELECT * FROM images WHERE productID=' . $_GET['id'] . ' AND isPreview = false';
+
+	if($result = $mysql -> query($query)) {
+		while($row = $result -> fetch_array()) {
+			$images_info[] = $row;
+		}
+		
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error());
+	}
+
 	$mysql -> close();
 ?>
 
@@ -191,7 +203,7 @@
 
 			<!-- Form -->
 			<div id="page-wrapper">
-				<form class="add-product container" action="php/add-product.php" method="POST" enctype="multipart/form-data">
+				<form class="add-product container" action="php/modify-product.php?id=<?php echo $_GET['id']; ?>" method="POST" enctype="multipart/form-data">
 					<h1>Edit product</h1>
 
 					<!-- Product title -->
@@ -206,13 +218,26 @@
 						<span id="textareaInfo">max length: 1000 characters</span>
 					</p>
 					<p class="imgPreview">
-						<div>Preview image*</div>
-						<input type="file" id="preview" name="preview" accept="image/*" required value="<?php echo $preview_url; ?>">
+						<div>Select another preivew image</div>
+						<input type="file" id="preview" name="preview" accept="image/*">
+
+
 					</p>
+					<img src="<?php echo $preview_url; ?>" style="max-width: 200px; max-height: 300px" id="previewImage">
 					<p>
 						<div>More images (optional)</div>
 						<input type="file" id="images" name="images[]" accept="image/*" multiple>
 						<div class="row" id="loadedImages">
+							<?php 
+								for ($i = 0; $i < count($images_info); $i++) {
+									$url = $images_info[$i]['url'];
+									$id = $images_info[$i]['id'];
+									echo " 
+									<div class='imageSmall' style='background: url($url); background-size: cover; background-position: 50% 50%;' id='$id'>
+										<i class='fa fa-minus-circle' id='deleteExistImage'></i>
+									</div>";
+								}
+							?>
 							<label class="images_label" for="images">
 								<i class="fa fa-upload"></i>
 							</label>
@@ -245,6 +270,9 @@
 					</p>
 					<input type="submit" value="Save changes" class="btn btn-primary">
 					<input type="button" value="Cancel" class="btn btn-secondary">
+
+					<select class="hidden" name="deleteImages[]" id="deletedImagesList" multiple>
+					</select>
 				</form>
 			</div>
        		<!--footer section start-->
@@ -264,6 +292,21 @@
 	<script type="text/javascript">
 		document.addEventListener("DOMContentLoaded", function(event) {
 
+			const deleteExistsImgButton = document.querySelectorAll('#deleteExistImage');
+
+			for(let i = 0; i < deleteExistsImgButton.length; i++) {
+				deleteExistsImgButton[i].addEventListener('click', function() {
+					var imageIndex = parseInt(deleteExistsImgButton[i].parentElement.id);
+					// alert(imageIndex);
+
+					let node = document.createElement("option");
+					node.value = imageIndex;
+					node.selected = 'selected';
+					document.getElementById('deletedImagesList').appendChild(node);
+					deleteExistsImgButton[i].parentElement.remove();
+				})
+			}
+
 			const form = document.querySelector('form');
 
 			const imagesUploadButton = document.getElementById('images');
@@ -278,6 +321,8 @@
 			const purchase = document.getElementById('purchasePrice');
 			const sale = document.getElementById('salePrice');
 			const discount = document.getElementById('discount');
+
+			var formdata = new FormData();
 
 			var deleteImageButton;
 			let fileList = new DataTransfer();
@@ -300,7 +345,7 @@
 				for(let i = 0; i < files.length; i++)
 					fileList.items.add(files[i]);
 
-				//  console.dir(fileList)
+				console.dir(fileList)
 
 				for(let i = 0; i < files.length; i++){
 					let node = document.createElement("div");
@@ -332,12 +377,8 @@
 
 			const showPreview = () => {
 				let files = previewUploadButton.files;
-				let node = document.createElement("img");
-				node.src = URL.createObjectURL(files[0]);
-				node.style.maxWidth = '200px';
-				node.style.maxHeight = '300px';
 
-				previewUploadButton.nextElementSibling.appendChild(node);
+				document.getElementById('previewImage').src = URL.createObjectURL(files[0]);
 			}
 
 			imagesUploadButton.addEventListener('change', addImage);
