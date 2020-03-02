@@ -12,6 +12,7 @@
 	// Product info
 	$title = htmlspecialchars(trim($_POST['title']));
 	$desc = htmlspecialchars(trim($_POST['description']));
+	$avalible = $_POST['avalible'];
 	$p_price = $_POST['purchasePrice'];
 	$s_price = $_POST['salePrice'];
 	$discount = $_POST['discount'];
@@ -28,8 +29,10 @@
 				$s_price,
 				$discount,
 				'$mysqltime',
-				$category
+				$category,
+				$avalible
 			)";
+			
 	if(!$mysql -> query($query)){
 		die("ERROR: Couldn't add record. " . $mysql -> error());
 	}

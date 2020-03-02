@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Хост: 127.0.0.1
--- Время создания: Фев 25 2020 г., 11:56
+-- Время создания: Мар 02 2020 г., 16:52
 -- Версия сервера: 10.4.11-MariaDB
 -- Версия PHP: 7.4.1
 
@@ -78,11 +78,8 @@ CREATE TABLE `images` (
 --
 
 INSERT INTO `images` (`id`, `url`, `productID`, `isPreview`) VALUES
-(6, '../Images/product17_preview.jpg', 17, 1),
-(8, '../Images/product18_preview.jpg', 18, 1),
-(9, '../Images/product18_image0', 18, 0),
-(10, '../Images/product19_preview.jpg', 19, 1),
-(11, '../Images/product19_image0', 19, 0);
+(12, '../Images/product20_preview.jpg', 20, 1),
+(13, '../Images/product20_image0', 20, 0);
 
 -- --------------------------------------------------------
 
@@ -98,17 +95,16 @@ CREATE TABLE `products` (
   `sale_price` float NOT NULL,
   `discount` int(11) DEFAULT NULL,
   `date` datetime NOT NULL,
-  `categoryID` int(11) NOT NULL
+  `categoryID` int(11) NOT NULL,
+  `avalible` smallint(6) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `products`
 --
 
-INSERT INTO `products` (`id`, `name`, `description`, `purchase_price`, `sale_price`, `discount`, `date`, `categoryID`) VALUES
-(17, 'Coca-Cola', 'Coca Cola 500 ml', 10, 8, 0, '2020-02-24 20:30:42', 1),
-(18, 'Cake', 'Berry Cake', 100, 100, 0, '2020-02-24 20:37:07', 1),
-(19, 'Lays', 'Lays Chips Classic', 20, 25, 0, '2020-02-25 11:54:59', 1);
+INSERT INTO `products` (`id`, `name`, `description`, `purchase_price`, `sale_price`, `discount`, `date`, `categoryID`, `avalible`) VALUES
+(20, 'Bread', 'Rye bread', 10, 20, 0, '2020-03-02 16:05:56', 1, 5);
 
 -- --------------------------------------------------------
 
@@ -120,17 +116,40 @@ CREATE TABLE `sales` (
   `id` bigint(20) UNSIGNED NOT NULL,
   `productID` bigint(20) UNSIGNED NOT NULL,
   `userID` bigint(20) UNSIGNED DEFAULT NULL,
-  `date` datetime DEFAULT NULL
+  `date` datetime DEFAULT NULL,
+  `count` int(11) NOT NULL DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Дамп данных таблицы `sales`
 --
 
-INSERT INTO `sales` (`id`, `productID`, `userID`, `date`) VALUES
-(4, 17, 0, '2020-02-24 00:00:00'),
-(5, 17, NULL, '2020-02-24 00:00:00'),
-(6, 18, NULL, '2020-02-24 00:00:00');
+INSERT INTO `sales` (`id`, `productID`, `userID`, `date`, `count`) VALUES
+(7, 20, NULL, '2020-03-02 00:00:00', 5);
+
+-- --------------------------------------------------------
+
+--
+-- Структура таблицы `workers`
+--
+
+CREATE TABLE `workers` (
+  `id` bigint(20) UNSIGNED NOT NULL,
+  `surname` varchar(20) NOT NULL,
+  `name` varchar(20) NOT NULL,
+  `DOB` date NOT NULL,
+  `enter_date` date NOT NULL,
+  `phone` varchar(20) NOT NULL,
+  `post` varchar(20) NOT NULL,
+  `photo` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Дамп данных таблицы `workers`
+--
+
+INSERT INTO `workers` (`id`, `surname`, `name`, `DOB`, `enter_date`, `phone`, `post`, `photo`) VALUES
+(1, 'Canty', 'David', '1984-05-15', '2020-03-04', '+1 253-946-8130', 'Manager', '../Images/worker1_photo.jpg');
 
 --
 -- Индексы сохранённых таблиц
@@ -169,6 +188,12 @@ ALTER TABLE `sales`
   ADD KEY `sales_ibfk_1` (`productID`);
 
 --
+-- Индексы таблицы `workers`
+--
+ALTER TABLE `workers`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- AUTO_INCREMENT для сохранённых таблиц
 --
 
@@ -188,19 +213,25 @@ ALTER TABLE `categories`
 -- AUTO_INCREMENT для таблицы `images`
 --
 ALTER TABLE `images`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=14;
 
 --
 -- AUTO_INCREMENT для таблицы `products`
 --
 ALTER TABLE `products`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- AUTO_INCREMENT для таблицы `sales`
 --
 ALTER TABLE `sales`
-  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+
+--
+-- AUTO_INCREMENT для таблицы `workers`
+--
+ALTER TABLE `workers`
+  MODIFY `id` bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Ограничения внешнего ключа сохраненных таблиц

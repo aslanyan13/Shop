@@ -142,6 +142,12 @@
 					<li><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
 					</li>
+					<li>
+						<a href="workers.php">
+							<i class="lnr lnr-users"></i>
+							<span>Workers</span>
+						</a>
+					</li>
 				</ul>
 				<!--sidebar nav end-->
 			</div>
@@ -227,7 +233,7 @@
 						<h4>Images</h4>
 						<div class="row" id="loadedImages">
 							<?php 
-								for ($i = 0; $i < count($images_info); $i++) {
+								for ($i = 0; $i < count($images_info) - 1; $i++) {
 									$url = $images_info[$i]['url'];
 									echo " 
 									<div class='imageSmall' style='background: url($url); background-size: cover; background-position: 50% 50%;'>
@@ -236,6 +242,9 @@
 							?>
 						</div>
 						
+					</p>
+					<p>
+						<div>Avalible: <?php echo $info['avalible']; ?></div>
 					</p>
 					<p>
 						<div>Purchase price: $ <?php echo $info['purchase_price']; ?></div>
@@ -276,10 +285,10 @@
 				darkWrapper.style.display = 'flex';
 				let imageUrl = images[i].style.backgroundImage;
 
-				urlStart = imageUrl.indexOf('"');
-				urlEnd = imageUrl.lastIndexOf('"');
+				let urlStart = imageUrl.indexOf('"');
+				let urlEnd = imageUrl.lastIndexOf('"');
 
-				imageUrl = imageUrl.substr(urlStart + 1, urlEnd -2 - urlStart + 1)
+				imageUrl = imageUrl.substr(urlStart + 1, urlEnd -2 - urlStart + 1);
 
 				let node = document.createElement('img');
 				node.classList.add('image-full');

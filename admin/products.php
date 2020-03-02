@@ -17,7 +17,7 @@
 		die('ERROR: Could not execute query! ' . $mysql -> error());
 	}
 
-	$page = isset($_GET['page']) ? $_GET['page'] - 1: 0;
+	$page = isset($_GET['page']) ? $_GET['page'] : 0;
 
 
 	$query = 'SELECT * FROM products ';
@@ -52,7 +52,7 @@
 	if($result = $mysql -> query($query)) {
 		$tmp = $result -> fetch_array();
 		$products = $tmp['row_count'];
-		$max_pages = ceil($products / 18);
+		$max_pages = floor($products / 18);
 	} else {
 		die('ERROR: Could not execute query! ' . $mysql -> error);
 	}
@@ -119,7 +119,7 @@
 				<ul class="nav nav-pills nav-stacked custom-nav">
 					<li><a href="index.php"><i class="lnr lnr-power-switch"></i><span>Dashboard</span></a></li>
 
-					<li class="selected">
+					<li class="selected active">
 						<a href="products.php">
 							<i class="lnr lnr-cart"></i>
 							<span>Products</span>
@@ -132,6 +132,12 @@
 
 					<li><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
+					</li>
+					<li>
+						<a href="workers.php">
+							<i class="lnr lnr-users"></i>
+							<span>Workers</span>
+						</a>
 					</li>
 				</ul>
 				<!--sidebar nav end-->
@@ -215,30 +221,26 @@
 				</form>
 
 				<?php
-					if(count($row) - 1 == 0) {
-						echo "<h2 class='text-center'>There are no products! <a href='add-product.php'>Add product</a>.</h2>";
-					} else {
-						echo '<p class="text-center page-select">';
-
-						echo '<a href="products.php"><<</a> ';
-
-						for($i = $page - 2; $i <= $page +2; $i++)
-						{
-							if($i <= 0 || $i > $max_pages) continue;
-							echo "<a href='products.php?page=$i'>" . ($i) ." </a>";
-						}
-
-						echo "<a href='products.php?page=$max_pages'>>></a>";
-						echo '</p>';
-					}
-					
+					echo '<table class="products-table table table-hover table-responsive-md">';
+					echo '<thead>';
+						echo '<tr>';
+						 	echo '<th scope="col">#</th>';
+						 	echo '<th scope="col">Image</th>';
+						 	echo '<th scope="col">Title</th>';
+						 	echo '<th scope="col">Description</th>';
+						 	echo '<th scope="col">Price</th>';
+						 	echo '<th scope="col">Discount</th>';
+						 	echo '<th scope="col">Avalible</th>';
+						 	echo '<th scope="col">Modify</th>';
+						 echo '</tr>';
+					echo '</thead>';
 
 					for($i = 0; $i < count($row) - 1; $i++) {
 						$title = $row[$i]["name"];
 						$desc = $row[$i]['description'];
 						$price = $row[$i]['sale_price'];
-						$purchase = $row[$i]['purchase_price'];
 						$discount = $row[$i]['discount'];
+						$avalible = $row[$i]['avalible'];
 						$id = $row[$i]['id'];
 						$preview_url = '';
 
@@ -249,30 +251,52 @@
 							$preview_url = $tmp['url'];
 						}
 
-						echo <<<BLOCK
-						<div class="product-block col-lg-3 col-sm-4" id="product$i">
-							<div class="product-block-inner">
-								<h3>$title</h3>
-								<img src="$preview_url">
-								<p class="desc">
-									$desc
-								</p>
-								<p>
-									Price: <span class="price">$ $price</span>
-								</p>
-								<p>
-									Discount: <span class="discount">$discount %</span>
-								</p>
-								<div class="product-controlls">
-									<a href="product-info.php?id=$id" class="see"><i class="fa fa-eye"></i></a>
-									<a href="edit-product.php?id=$id" class="edit"><i class="fa fa-edit"></i></a>
-									<a href="php/delete-product.php?id=$id" class="remove"><i class="fa fa-trash-o"></i></a>
-								</div>
-							</div>
-						</div>
-						BLOCK;
+						echo '<tbody>';
+						if($avalible > 10) echo '<tr class="success">';
+						else if ($avalible >= 5 && $avalible <= 10) echo '<tr class="warning">';
+						else echo '<tr class="danger">';
+							echo "<th scope='row'>" . $id . "</th>";
+							echo '<td><img class="img-responsive product-image" src="' . $preview_url . '"></td>';
+							echo '<td>' . $title  . '</td>';
+							echo '<td>' . $desc . '</td>';
+							echo '<td> $ ' . $price . '</td>';
+							echo '<td>' . $discount . '% </td>';
+							echo '<td>' . $avalible . '</td>';
+
+							echo '<td class="product-modify">
+									<a href="product-info.php?id=' . $id . '" id="product-see"><i class="fa fa-eye"></i></a>
+
+									<a href="edit-product.php?id=' . $id . '" id="product-edit"><i class="fa fa-pencil-square-o"></i></a>
+
+									<a href="php/delete-product.php?id=' . $id . '" id="product-delete"><i class=" fa fa-times-circle"></i></a>
+								  </td>';
+						echo '</tr>';
 					}
-					
+
+					echo '<tr>';
+
+						echo "<th class='worker-add' scope='row' colspan='9'>
+								<a href='add-product.php'><i class='fa fa-plus'></i> Add product</a>
+							  </th>";
+					echo '</tr>';
+
+					echo '</tbody>';
+					echo '</table>';
+
+					echo '<p class="text-center page-select">';
+
+					echo '<a href="products.php"><<</a> ';
+
+					for($i = $page - 2; $i <= $page + 2; $i++)
+					{
+						if($i < 0 || $i > $max_pages) continue;
+						echo "<a href='products.php?page=" . ($i) . "'>" . ($i + 1) ." </a>";
+					}
+
+					// die($max_pages + 1);
+
+					echo "<a href='products.php?page=" . ($max_pages). "'>>></a>";
+					echo '</p>';
 				?>
 			</div>
        		<!--footer section start-->
@@ -289,7 +313,7 @@
 	<!-- Bootstrap Core JavaScript -->
 	<script src="js/bootstrap.min.js"></script>
 	<script type="text/javascript">
-		var removeButtons = document.querySelectorAll('.remove');
+		var removeButtons = document.querySelectorAll('#product-delete');
 
 		for(let i = 0; i < removeButtons.length; i++)
 		{

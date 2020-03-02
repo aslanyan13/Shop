@@ -31,7 +31,7 @@
 		die('ERROR: Could not execute query! ' . $mysql -> error);
 	}
 
-	$query = "SELECT count(id) as sales_count FROM sales";
+	$query = "SELECT sum(count) as sales_count FROM sales";
 
 	$sales_count = 0;
 	if($result = $mysql -> query ($query)) {
@@ -46,7 +46,7 @@
 
 	$sales_list = [];
 
-	$query = "SELECT p.purchase_price, p.sale_price, p.discount, s.date FROM sales as s
+	$query = "SELECT p.purchase_price, p.sale_price, p.discount, s.date, s.count FROM sales as s
 			  LEFT JOIN products as p
 			  ON s.productID = p.id";
 
@@ -61,9 +61,19 @@
 
 	for($i = 0; $i < count($sales_list) - 1; $i++) {
 		if($sales_list[$i]['discount'] != 0)
-			$profit += $sales_list[$i]['sale_price'] * $sales_list[$i]['discount'] / 100 - $sales_list[$i]['purchase_price'];
+			$profit += ($sales_list[$i]['sale_price'] * $sales_list[$i]['discount'] / 100 - $sales_list[$i]['purchase_price']) * $sales_list[$i]['count'];
 		else 
-			$profit += $sales_list[$i]['sale_price'] - $sales_list[$i]['purchase_price'];
+			$profit += ($sales_list[$i]['sale_price'] - $sales_list[$i]['purchase_price']) * $sales_list[$i]['count'];
+	}
+
+	$query = 'SELECT count(id) as workers_count FROM workers';
+
+	if($result = $mysql -> query($query)) {
+		$row = $result -> fetch_array();
+
+		$workers = $row['workers_count'];
+	} else {
+		die('ERROR: Could not execute query! ' . $mysql -> error());
 	}
 
 	$today_earning = 0;
@@ -85,14 +95,14 @@
 
 	for($i = 0; $i < count($sales_list) - 1; $i++) {
 		if($sales_list[$i]['date'] > $day_start) {
-			$today_earning += $sales_list[$i]['sale_price'];
+			$today_earning += $sales_list[$i]['sale_price'] * $sales_list[$i]['count'];
 			$today_sold++;
 		}
 		if($sales_list[$i]['date'] > $month_start) {
-			$month_earning += $sales_list[$i]['sale_price'];
+			$month_earning += $sales_list[$i]['sale_price'] * $sales_list[$i]['count'];
 			$month_sold++;
 		}
-		$all_time_earning += $sales_list[$i]['sale_price'];
+		$all_time_earning += $sales_list[$i]['sale_price'] * $sales_list[$i]['count'];
 		$all_time_sold++;
 	}
 ?>
@@ -166,6 +176,13 @@
 
 					<li><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
+					</li>
+
+					<li>
+						<a href="workers.php">
+							<i class="lnr lnr-users"></i>
+							<span>Workers</span>
+						</a>
 					</li>
 				</ul>
 				<!--sidebar nav end-->
@@ -264,11 +281,15 @@
 						</div>
 						<div class="col-md-3 widget widget1">
 							<div class="r3_counter_box">
-								<i class="fa fa-eye"></i>
+								<i class="fa fa-users"></i>
 								<div class="stats">
-								  <h5>0</h5>
+								  <h5>
+								  	<?php
+								  		echo ($workers != 0) ? $workers : '0';
+								  	?>
+								  </h5>
 								  <div class="grow grow3">
-									<p>Visitors</p>
+									<p>Workers</p>
 								  </div>
 								</div>
 							</div>

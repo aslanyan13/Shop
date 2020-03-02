@@ -8,7 +8,7 @@
 
 	$query = 'SELECT * FROM admins WHERE id=' . $_SESSION['admin_id'];
 
-	$page = isset($_GET['page']) ? $_GET['page'] - 1: 0;
+	$page = isset($_GET['page']) ? $_GET['page'] : 0;
 
 	$username = "";
 
@@ -26,7 +26,7 @@
 	if($result = $mysql -> query($query)) {
 		$tmp = $result -> fetch_array();
 		$sales = $tmp['row_count'];
-		$max_pages = ceil($sales / 18);
+		$max_pages = floor($sales / 18);
 	} else {
 		die('ERROR: Could not execute query! ' . $mysql -> error);
 	}
@@ -104,6 +104,10 @@
 					<li class="active"><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
 					</li>
+					<li><a href="workers.php">
+						<i class="lnr lnr-users"></i>
+						<span>Workers</span></a>
+					</li>
 				</ul>
 				<!--sidebar nav end-->
 			</div>
@@ -178,12 +182,13 @@
 						 	echo '<th scope="col">Sale price</th>';
 						 	echo '<th scope="col">Profit</th>';
 						 	echo '<th scope="col">Date</th>';
+						 	echo '<th scope="col">Count</th>';
 						 echo '</tr>';
 					echo '</thead>';
 					
 
 					$query = 
-					"SELECT s.id, p.name, p.sale_price, p.purchase_price, p.discount, s.date FROM sales as s
+					"SELECT s.id, p.name, p.sale_price, p.purchase_price, p.discount, s.date, s.count FROM sales as s
 					LEFT JOIN products as p
 					ON s.productID = p.id;";
 
@@ -193,33 +198,43 @@
 					$total_count = 0;
 					$total_purchase = 0;
 					$total_profit = 0;
+					$total_products_count = 0;
 
 					if ($result = $mysql -> query($query)) {
 						while($row = $result -> fetch_array()) {
-							$discount = $row['discount'];
-							if($discount != 0)
-								$price_with_discount = $row['sale_price'] * $discount / 100;
-							else
-								$price_with_discount = $row['sale_price'];
 
-							$total_profit += $price_with_discount - $row['purchase_price'];
+
+							$count = $row['count'];
+							$discount = $row['discount'];
+
+							$sale_price = $row['sale_price'] * $count;
+							$purchase_price = $row['purchase_price'] * $count;
+
+							if($discount != 0)
+								$price_with_discount = $sale_price * $discount / 100;
+							else
+								$price_with_discount = $sale_price;
+
+							$total_profit += $price_with_discount - $purchase_price;
 							$total_sales_price += $price_with_discount;
-							$total_purchase += $row['purchase_price'];
+							$total_purchase += $purchase_price;
+							$total_products_count += $row['count'];
 							$total_count++;
 
-							if(($row['sale_price'] - $row['purchase_price']) > 0) {
+							if(($sale_price - $purchase_price) > 0) {
 								echo '<tr class="success">';
-							} else if (($row['sale_price'] - $row['purchase_price']) == 0) {
+							} else if (($sale_price - $purchase_price) == 0) {
 								echo '<tr class="warning">';
 							} else {
 								echo '<tr class="danger">';
 							}
 								echo "<th scope='row'>" . $row['id'] . "</th>";
 								echo "<td>" .$row['name']. "</td>";
-								echo "<td> $" .$row['purchase_price']. "</td>";
-								echo "<td> $" .$row['sale_price']. " ($ " . $price_with_discount . " with discount) </td>";
-								echo "<td> $" . ($price_with_discount - $row['purchase_price']) . "</td>";
+								echo "<td> $" .$purchase_price . "</td>";
+								echo "<td> $" .$sale_price . " ($ " .  $price_with_discount . " with discount) </td>";
+								echo "<td> $" . ($price_with_discount - $purchase_price)  . "</td>";
 								echo "<td>" .$row['date']. "</td>";
+								echo "<td>" .$row['count']. "</td>";
 							echo '</tr>';
 						}
  					} else {
@@ -236,6 +251,7 @@
 						 	echo '<th scope="col">Total purchase</th>';
 						 	echo '<th scope="col">Total sale</th>';
 						 	echo '<th scope="col">Total profit</th>';
+						 	echo '<th scope="col">Total products saled</th>';
 						 echo '</tr>';
 					echo '</thead>';
 					echo '<tbody>';
@@ -244,12 +260,14 @@
 						 	echo '<td> $' . $total_purchase . '</td>';
 						 	echo '<td> $' . $total_sales_price . '</td>';
 						 	if($total_profit < 0)
-						 		echo '<td class="danger">';
+						 		echo '<td class="danger"> $';
 						 	else if($total_profit == 0)
-						 		echo '<td class="warning">';
+						 		echo '<td class="warning"> $';
 						 	else
-						 		echo '<td class="success">';
+						 		echo '<td class="success"> $';
 						 	echo $total_profit . '</td>';
+
+						 	echo '<td>' . $total_products_count . '</td>';
 						echo '</tr>';
 					echo '</tbody>';
 
@@ -261,11 +279,11 @@
 
 					for($i = $page - 2; $i <= $page +2; $i++)
 					{
-						if($i <= 0 || $i > $max_pages) continue;
-						echo "<a href='sales.php?page=$i'>" . ($i) ." </a>";
+						if($i < 0 || $i > $max_pages) continue;
+						echo "<a href='sales.php?page=" . ($i) . "'>" . ($i + 1) ." </a>";
 					}
 
-					echo "<a href='sales.php?page=$max_pages'>>></a>";
+					echo "<a href='sales.php?page=" . ($max_pages) . "'>>></a>";
 					echo '</p>';
 				?>
 			</div>

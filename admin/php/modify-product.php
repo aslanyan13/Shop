@@ -7,7 +7,7 @@
 	//print_r($_FILES);
 
 	if(!isset($_POST['title']))
-		header('Location: ../add-product.php');
+		header('Location: ../edit-product.php');
 
 	// Product info
 	$id = $_GET['id'];
@@ -18,6 +18,7 @@
 	$discount = $_POST['discount'];
 	$category = $_POST['category'];
 	$delete_images_list = $_POST['deleteImages'];
+	$avalible = $_POST['avalible'];
 	$mysqltime = date ("Y-m-d H:i:s");
 
 	// Adding products to db
@@ -28,7 +29,8 @@
 				purchase_price=$p_price,
 				sale_price=$s_price,
 				discount=$discount,
-				categoryID=$category
+				categoryID=$category,
+				avalible=$avalible
 			WHERE id=$id";
 	if(!$mysql -> query($query)){
 		die("ERROR: Couldn't add record. " . $mysql -> error);

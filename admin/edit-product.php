@@ -106,7 +106,7 @@
 
 </head> 
    
- <body class="sticky-header left-side-collapsed"  onload="initMap()">
+ <body class="sticky-header left-side-collapsed product"  onload="initMap()">
     <section>
     <!-- left side start-->
 		<div class="left-side sticky-left-side">
@@ -137,6 +137,12 @@
 
 					<li><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
+					</li>
+					<li>
+						<a href="workers.php">
+							<i class="lnr lnr-users"></i>
+							<span>Workers</span>
+						</a>
 					</li>
 				</ul>
 				<!--sidebar nav end-->
@@ -243,6 +249,10 @@
 							</label>
 						</div>
 						
+					</p>
+					<p>
+						<div>Avalible*</div>
+						<input type="number" id="avalible" name="avalible" value="<?php echo $info['avalible']; ?>" min="1" required>
 					</p>
 					<p>
 						<div>Purchase price*</div>

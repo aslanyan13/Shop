@@ -74,7 +74,7 @@
 
 </head> 
    
- <body class="sticky-header left-side-collapsed"  onload="initMap()">
+ <body class="sticky-header left-side-collapsed product"  onload="initMap()">
     <section>
     <!-- left side start-->
 		<div class="left-side sticky-left-side">
@@ -105,6 +105,12 @@
 
 					<li><a href="sales.php"><i class="lnr lnr-pie-chart"></i>
 						<span>Sales</span></a>
+					</li>
+					<li>
+						<a href="workers.php">
+							<i class="lnr lnr-users"></i>
+							<span>Workers</span>
+						</a>
 					</li>
 				</ul>
 				<!--sidebar nav end-->
@@ -200,6 +206,10 @@
 						
 					</p>
 					<p>
+						<div>Avalible*</div>
+						<input type="number" id="avalible" name="avalible" value="1" min="1" required>
+					</p>
+					<p>
 						<div>Purchase price*</div>
 						<input type="number" id="purchasePrice" name="purchasePrice" value="0" min="0" required>
 					</p>
@@ -224,7 +234,7 @@
 						</select>
 					</p>
 					<input type="submit" value="Save & add" class="btn btn-primary">
-					<input type="button" value="Cancel" class="btn btn-secondary">
+					<input type="button" value="Cancel" class="btn btn-secondary" onclick="location.href='products.php'">
 				</form>
 			</div>
        		<!--footer section start-->

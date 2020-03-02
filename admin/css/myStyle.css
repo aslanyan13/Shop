@@ -1,61 +1,22 @@
-.product-block {
-	padding: 5px;
-	min-height: 450px;
-}
-.product-block-inner {
-	min-height: 450px;
+.product-modify {
 	text-align: center;
-	-ms-box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.2);
-    -o-box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.2);
-    -moz-box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.2);
-    -webkit-box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.2);
-    box-shadow: 0 1px 3px 0px rgba(0, 0, 0, 0.2);
-	background:#fff;
-	padding: 25px 20px;
-
 }
-.product-block-inner h3 {
-	text-align: left;
-	color:#000;
-	margin-bottom: 10px;
-	font-size:1.2em;
-}
-.product-block-inner p {
-	text-align: left;
-	color: #777;
-}
-.product-block-inner img {
-	max-width: 100%;
-	height: auto;
-}
-.product-block-inner .desc {
-	height: 20px;
-	color: #999;
-	margin: 10px 0;
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-}
-.product-controlls {
-	line-height: 2em;
-	text-align: center;
-	margin-top: 20px;
-	font-size: 2em; 
-}
-.product-controlls a {
+.product-modify a {
+	font-size: 20px;
 	margin: 0 5px;
 }
-.product-controlls .see {
+.products-table #product-see {
 	color: #8BC34A;
 }
-.product-controlls .edit {
+.products-table #product-edit {
 	color: #FFCA28;
 }
-.product-controlls .remove {
+.products-table #product-delete {
 	color: #F44336;
 }
-.product-controlls a:hover {
-	color: black;
+.product-image {
+	max-width: 100px;
+	border: 2px solid white;
 }
 
 .modal-title {
@@ -68,14 +29,13 @@
 .add-product p {
 	margin: 20px 0; 
 }
-input[type=text], input[type=number] {
+.product input[type=text], input[type=number] {
 	border: none;
 	border-bottom: 2px solid #8BC34A;
 	background: rgba(0, 0, 0, 0.05);
 	outline: none;
-
 }
-textarea {
+.product textarea {
 	border: none;
 	outline: none;
 	width: 380px;
@@ -83,7 +43,7 @@ textarea {
 	background: rgba(0, 0, 0, 0.1);
 	border-bottom: 2px solid #8BC34A;
 }
-input[type=submit], input[type=button] {
+.product input[type=submit], input[type=button] {
 	margin-bottom: 30px; 
 }
 #images {
@@ -179,4 +139,58 @@ input[type=submit], input[type=button] {
 
 .totals {
 	margin: 20px 0;
+}
+
+.workers-table {
+	font-size: 1.2em;
+}
+
+.worker-image {
+	border-radius: 100%;
+	border: 2px solid #8BC34A;
+	height: 80px;
+	width: 80px; 
+}
+.worker-modify {
+	text-align: center; 
+}
+.worker-modify a {
+	font-size: 24px;
+	margin: 0 5px;
+}
+.worker-modify #worker-edit {
+	color: #FFCA28;
+}
+.worker-modify #worker-delete {
+	color: #F44336;
+}
+.worker-modify-btn:hover {
+	color: black;
+}
+.worker-add {
+	text-align: center;
+}
+.worker-add a {
+	font-size: 20px;
+	color: #8BC34A;
+}
+.worker-add a:hover {
+	text-decoration: underline;
+}
+.worker-add a i {
+	margin-right: 4px;
+}
+
+.modal input[type=submit], .modal input[type=button] {
+	margin-bottom: 0px; 
+}
+.worker-photo-preview {
+	background: url('../../Images/avatar-placeholder.gif');
+	-webkit-background-size: cover;
+	background-size: cover;
+	height: 100px;
+	margin: 0;
+	width: 100px;
+	border: 1px solid #8BC34A;
+	border-radius: 100%;
 }
